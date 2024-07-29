@@ -18,6 +18,7 @@ import io.camunda.zeebe.engine.state.deployment.DbDeploymentState;
 import io.camunda.zeebe.engine.state.deployment.DbFormState;
 import io.camunda.zeebe.engine.state.deployment.DbProcessState;
 import io.camunda.zeebe.engine.state.distribution.DbDistributionState;
+import io.camunda.zeebe.engine.state.identity.DbAuthorizationState;
 import io.camunda.zeebe.engine.state.immutable.PendingMessageSubscriptionState;
 import io.camunda.zeebe.engine.state.immutable.PendingProcessMessageSubscriptionState;
 import io.camunda.zeebe.engine.state.instance.DbElementInstanceState;
@@ -33,6 +34,7 @@ import io.camunda.zeebe.engine.state.message.DbMessageSubscriptionState;
 import io.camunda.zeebe.engine.state.message.DbProcessMessageSubscriptionState;
 import io.camunda.zeebe.engine.state.message.TransientPendingSubscriptionState;
 import io.camunda.zeebe.engine.state.migration.DbMigrationState;
+import io.camunda.zeebe.engine.state.mutable.MutableAuthorizationState;
 import io.camunda.zeebe.engine.state.mutable.MutableBannedInstanceState;
 import io.camunda.zeebe.engine.state.mutable.MutableCompensationSubscriptionState;
 import io.camunda.zeebe.engine.state.mutable.MutableDecisionState;
@@ -94,6 +96,7 @@ public class ProcessingDbState implements MutableProcessingState {
   private final MutableUserTaskState userTaskState;
   private final MutableCompensationSubscriptionState compensationSubscriptionState;
   private final MutableUserState userState;
+  private final MutableAuthorizationState authorizationState;
   private final int partitionId;
 
   public ProcessingDbState(
@@ -137,6 +140,7 @@ public class ProcessingDbState implements MutableProcessingState {
     compensationSubscriptionState =
         new DbCompensationSubscriptionState(zeebeDb, transactionContext);
     userState = new DbUserState(zeebeDb, transactionContext);
+    authorizationState = new DbAuthorizationState(zeebeDb, transactionContext);
   }
 
   @Override
@@ -270,6 +274,11 @@ public class ProcessingDbState implements MutableProcessingState {
   @Override
   public PendingProcessMessageSubscriptionState getPendingProcessMessageSubscriptionState() {
     return processMessageSubscriptionState;
+  }
+
+  @Override
+  public MutableAuthorizationState getAuthorizationState() {
+    return authorizationState;
   }
 
   @Override
