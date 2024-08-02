@@ -12,13 +12,13 @@ import io.camunda.zeebe.db.DbValue;
 import io.camunda.zeebe.db.TransactionContext;
 import io.camunda.zeebe.db.ZeebeDb;
 import io.camunda.zeebe.engine.EngineConfiguration;
+import io.camunda.zeebe.engine.state.authorization.DbAuthorizationState;
 import io.camunda.zeebe.engine.state.compensation.DbCompensationSubscriptionState;
 import io.camunda.zeebe.engine.state.deployment.DbDecisionState;
 import io.camunda.zeebe.engine.state.deployment.DbDeploymentState;
 import io.camunda.zeebe.engine.state.deployment.DbFormState;
 import io.camunda.zeebe.engine.state.deployment.DbProcessState;
 import io.camunda.zeebe.engine.state.distribution.DbDistributionState;
-import io.camunda.zeebe.engine.state.identity.DbAuthorizationState;
 import io.camunda.zeebe.engine.state.immutable.PendingMessageSubscriptionState;
 import io.camunda.zeebe.engine.state.immutable.PendingProcessMessageSubscriptionState;
 import io.camunda.zeebe.engine.state.instance.DbElementInstanceState;
@@ -262,6 +262,11 @@ public class ProcessingDbState implements MutableProcessingState {
   }
 
   @Override
+  public MutableAuthorizationState getAuthorizationState() {
+    return authorizationState;
+  }
+
+  @Override
   public KeyGenerator getKeyGenerator() {
     return keyGenerator;
   }
@@ -274,11 +279,6 @@ public class ProcessingDbState implements MutableProcessingState {
   @Override
   public PendingProcessMessageSubscriptionState getPendingProcessMessageSubscriptionState() {
     return processMessageSubscriptionState;
-  }
-
-  @Override
-  public MutableAuthorizationState getAuthorizationState() {
-    return authorizationState;
   }
 
   @Override
