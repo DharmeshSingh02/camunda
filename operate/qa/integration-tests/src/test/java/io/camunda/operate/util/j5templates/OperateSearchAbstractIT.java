@@ -45,7 +45,12 @@ import org.springframework.test.web.servlet.MvcResult;
       OperateProperties.PREFIX + ".importer.startLoadingDataOnStartup = false",
       OperateProperties.PREFIX + ".archiver.rolloverEnabled = false",
       "spring.mvc.pathmatch.matching-strategy=ANT_PATH_MATCHER",
-      OperateProperties.PREFIX + ".multiTenancy.enabled = false"
+      OperateProperties.PREFIX + ".multiTenancy.enabled = false",
+      OperateProperties.PREFIX + ".zeebe-elasticsearch.interceptor-plugins[0].id=my-plugin",
+      OperateProperties.PREFIX
+          + ".zeebe-elasticsearch.interceptor-plugins[0].class-name=com.myplugin.MyCustomHeaderPlugin",
+      OperateProperties.PREFIX
+          + ".zeebe-elasticsearch.interceptor-plugins[0].jar-path=/Users/igpetrov/Workspaces/ESTeam/ZeebeDBPlugin/target/ZeebeDBPlugin-1.0-SNAPSHOT.jar"
     })
 @WebAppConfiguration
 @WithMockUser(DEFAULT_USER)

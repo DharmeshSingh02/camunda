@@ -10,17 +10,22 @@ package io.camunda.tasklist.os;
 import com.amazonaws.regions.DefaultAwsRegionProviderChain;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import io.camunda.plugin.search.header.DatabaseCustomHeaderSupplier;
 import io.camunda.tasklist.data.conditionals.OpenSearchCondition;
 import io.camunda.tasklist.exceptions.TasklistRuntimeException;
+import io.camunda.tasklist.property.InterceptorPluginProperties;
 import io.camunda.tasklist.property.OpenSearchProperties;
 import io.camunda.tasklist.property.SslProperties;
 import io.camunda.tasklist.property.TasklistProperties;
+import io.camunda.zeebe.util.ReflectUtil;
+import io.camunda.zeebe.util.jar.ExternalJarClassLoader;
 import io.github.acm19.aws.interceptor.http.AwsRequestSigningApacheInterceptor;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Paths;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -29,6 +34,7 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.time.Duration;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import javax.net.ssl.SSLContext;
 import net.jodah.failsafe.Failsafe;
@@ -361,10 +367,48 @@ public class OpenSearchConnector {
   private HttpAsyncClientBuilder configureApacheHttpClient5(
       final HttpAsyncClientBuilder httpAsyncClientBuilder, final OpenSearchProperties osConfig) {
     setupAuthentication(httpAsyncClientBuilder, osConfig);
+
+    LOGGER.trace("Attempt to load interceptor plugins");
+    if (osConfig.getInterceptorPlugins() != null) {
+      loadInterceptorPlugins(httpAsyncClientBuilder, osConfig);
+    }
+
     if (osConfig.getSsl() != null) {
       setupSSLContext(httpAsyncClientBuilder, osConfig.getSsl());
     }
     return httpAsyncClientBuilder;
+  }
+
+  private void loadInterceptorPlugins(
+      final HttpAsyncClientBuilder httpAsyncClientBuilder, final OpenSearchProperties osConfig) {
+    LOGGER.trace("Plugins detected to be not empty {}", osConfig.getInterceptorPlugins());
+
+    final List<InterceptorPluginProperties> interceptors = osConfig.getInterceptorPlugins();
+    for (final InterceptorPluginProperties interceptor : interceptors) {
+      LOGGER.trace("Attempting to register {}", interceptor.getId());
+      try {
+        // WARNING! Due to the nature of interceptors, by the moment they (interceptors)
+        // are executed, the below class loader will close the JAR file hence
+        // to avoid NoClassDefFoundError we must not close this class loader.
+        final var classLoader = ExternalJarClassLoader.ofPath(Paths.get(interceptor.getJarPath()));
+
+        final var pluginClass = classLoader.loadClass(interceptor.getClassName());
+        final var plugin = ReflectUtil.newInstance(pluginClass);
+
+        if (plugin instanceof final DatabaseCustomHeaderSupplier dchs) {
+          LOGGER.trace(
+              "Plugin {} appears to be a DB Header Provider. Registering with interceptor",
+              interceptor.getId());
+          httpAsyncClientBuilder.addRequestInterceptorFirst(
+              (httpRequest, entityDetails, httpContext) ->
+                  httpRequest.addHeader(
+                      dchs.getElasticsearchCustomHeader().key(),
+                      dchs.getElasticsearchCustomHeader().value()));
+        }
+      } catch (final Exception e) {
+        throw new RuntimeException("Failed to load interceptor plugin due to exception", e);
+      }
+    }
   }
 
   private RequestConfig.Builder setTimeouts(
@@ -441,6 +485,7 @@ public class OpenSearchConnector {
     }
   }
 
+  // TODO: Do we need header plugin for AWS?
   private OpenSearchAsyncClient getAwsAsyncClient(final OpenSearchProperties osConfig) {
     final String region = new DefaultAwsRegionProviderChain().getRegion();
     final SdkAsyncHttpClient httpClient = NettyNioAsyncHttpClient.builder().build();
@@ -455,6 +500,7 @@ public class OpenSearchConnector {
     return new OpenSearchAsyncClient(transport);
   }
 
+  // TODO: Do we need header plugin for AWS?
   private OpenSearchClient getAwsClient(final OpenSearchProperties osConfig) {
     final String region = new DefaultAwsRegionProviderChain().getRegion();
     final SdkAsyncHttpClient httpClient = NettyNioAsyncHttpClient.builder().build();

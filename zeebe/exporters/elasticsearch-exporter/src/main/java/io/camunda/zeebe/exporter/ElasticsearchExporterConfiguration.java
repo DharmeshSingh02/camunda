@@ -10,6 +10,9 @@ package io.camunda.zeebe.exporter;
 import io.camunda.zeebe.protocol.record.Record;
 import io.camunda.zeebe.protocol.record.RecordType;
 import io.camunda.zeebe.protocol.record.ValueType;
+import java.util.List;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 public class ElasticsearchExporterConfiguration {
 
@@ -25,6 +28,7 @@ public class ElasticsearchExporterConfiguration {
   public final BulkConfiguration bulk = new BulkConfiguration();
   public final RetentionConfiguration retention = new RetentionConfiguration();
   private final AuthenticationConfiguration authentication = new AuthenticationConfiguration();
+  private List<InterceptorPlugin> interceptorPlugins;
 
   public boolean hasAuthenticationPresent() {
     return getAuthentication().isPresent();
@@ -32,6 +36,14 @@ public class ElasticsearchExporterConfiguration {
 
   public AuthenticationConfiguration getAuthentication() {
     return authentication;
+  }
+
+  public List<InterceptorPlugin> getInterceptorPlugins() {
+    return interceptorPlugins;
+  }
+
+  public void setInterceptorPlugins(final List<InterceptorPlugin> interceptorPlugins) {
+    this.interceptorPlugins = interceptorPlugins;
   }
 
   @Override
@@ -50,6 +62,8 @@ public class ElasticsearchExporterConfiguration {
         + retention
         + ", authentication="
         + authentication
+        + ", interceptors="
+        + interceptorPlugins
         + '}';
   }
 
@@ -407,6 +421,75 @@ public class ElasticsearchExporterConfiguration {
           + minimumAge
           + ", policyName='"
           + policyName
+          + '\''
+          + '}';
+    }
+  }
+
+  public static final class InterceptorPlugin {
+    private String id;
+    private String className;
+    private String jarPath;
+
+    public String getId() {
+      return id;
+    }
+
+    public void setId(final String id) {
+      this.id = id;
+    }
+
+    public String getClassName() {
+      return className;
+    }
+
+    public void setClassName(final String className) {
+      this.className = className;
+    }
+
+    public String getJarPath() {
+      return jarPath;
+    }
+
+    public void setJarPath(final String jarPath) {
+      this.jarPath = jarPath;
+    }
+
+    @Override
+    public int hashCode() {
+      return new HashCodeBuilder(17, 37).append(id).append(className).append(jarPath).toHashCode();
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+      if (this == o) {
+        return true;
+      }
+
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+
+      final InterceptorPlugin that = (InterceptorPlugin) o;
+
+      return new EqualsBuilder()
+          .append(id, that.id)
+          .append(className, that.className)
+          .append(jarPath, that.jarPath)
+          .isEquals();
+    }
+
+    @Override
+    public String toString() {
+      return "Interceptor{"
+          + "id='"
+          + id
+          + '\''
+          + ", className='"
+          + className
+          + '\''
+          + ", jarPath='"
+          + jarPath
           + '\''
           + '}';
     }

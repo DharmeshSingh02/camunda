@@ -7,7 +7,15 @@
  */
 package io.camunda.zeebe.exporter;
 
+import io.camunda.plugin.search.header.DatabaseCustomHeaderSupplier;
+import io.camunda.zeebe.exporter.ElasticsearchExporterConfiguration.InterceptorPlugin;
+import io.camunda.zeebe.util.ReflectUtil;
+import io.camunda.zeebe.util.jar.ExternalJarClassLoader;
+import io.camunda.zeebe.util.jar.ThreadContextUtil;
+import java.nio.file.Paths;
+import java.util.List;
 import org.apache.http.HttpHost;
+import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
@@ -16,8 +24,12 @@ import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.impl.nio.reactor.IOReactorConfig;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 final class RestClientFactory {
+  private static final Logger LOGGER = LoggerFactory.getLogger(RestClientFactory.class);
+
   private static final RestClientFactory INSTANCE = new RestClientFactory();
 
   private RestClientFactory() {}
@@ -53,7 +65,52 @@ final class RestClientFactory {
       setupBasicAuthentication(config, builder);
     }
 
+    LOGGER.trace("Attempt to load interceptor plugins");
+    if (config.getInterceptorPlugins() != null) {
+      loadInterceptorPlugins(builder, config);
+    }
+
     return builder;
+  }
+
+  private void loadInterceptorPlugins(
+      final HttpAsyncClientBuilder httpAsyncClientBuilder,
+      final ElasticsearchExporterConfiguration elsConfig) {
+    LOGGER.trace("Plugins detected to be not empty {}", elsConfig.getInterceptorPlugins());
+
+    final List<InterceptorPlugin> interceptors = elsConfig.getInterceptorPlugins();
+    for (final InterceptorPlugin interceptor : interceptors) {
+      LOGGER.trace("Attempting to register {}", interceptor.getId());
+      try {
+        // WARNING! Due to the nature of interceptors, by the moment they (interceptors)
+        // are executed, the below class loader will close the JAR file hence
+        // to avoid NoClassDefFoundError we must not close this class loader.
+        final var classLoader = ExternalJarClassLoader.ofPath(Paths.get(interceptor.getJarPath()));
+
+        final var pluginClass = classLoader.loadClass(interceptor.getClassName());
+        final var plugin = ReflectUtil.newInstance(pluginClass);
+
+        if (plugin instanceof final DatabaseCustomHeaderSupplier dchs) {
+          LOGGER.trace(
+              "Plugin {} appears to be a DB Header Provider. Registering with interceptor",
+              interceptor.getId());
+          httpAsyncClientBuilder.addInterceptorLast(
+              (HttpRequestInterceptor)
+                  (httpRequest, httpContext) -> {
+                    try {
+                      final var customHeader =
+                          ThreadContextUtil.callWithClassLoader(
+                              dchs::getElasticsearchCustomHeader, classLoader);
+                      httpRequest.addHeader(customHeader.key(), customHeader.value());
+                    } catch (final Exception e) {
+                      throw new RuntimeException(e);
+                    }
+                  });
+        }
+      } catch (final Exception e) {
+        throw new RuntimeException("Failed to load interceptor plugin due to exception", e);
+      }
+    }
   }
 
   private void setupBasicAuthentication(

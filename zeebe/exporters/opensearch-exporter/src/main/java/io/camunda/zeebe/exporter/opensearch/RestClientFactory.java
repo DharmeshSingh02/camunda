@@ -7,11 +7,18 @@
  */
 package io.camunda.zeebe.exporter.opensearch;
 
+import io.camunda.plugin.search.header.DatabaseCustomHeaderSupplier;
 import io.camunda.zeebe.exporter.opensearch.OpensearchExporterConfiguration.AwsConfiguration;
+import io.camunda.zeebe.exporter.opensearch.OpensearchExporterConfiguration.InterceptorPlugin;
+import io.camunda.zeebe.util.ReflectUtil;
+import io.camunda.zeebe.util.jar.ExternalJarClassLoader;
+import io.camunda.zeebe.util.jar.ThreadContextUtil;
 import io.github.acm19.aws.interceptor.http.AwsRequestSigningApacheInterceptor;
+import java.nio.file.Paths;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.auth.AuthScope;
@@ -96,6 +103,11 @@ final class RestClientFactory {
       log.info("AWS Signing is disabled.");
     }
 
+    log.trace("Attempt to load interceptor plugins");
+    if (config.getInterceptorPlugins() != null) {
+      loadInterceptorPlugins(config, builder);
+    }
+
     if (allowAllSelfSignedCertificates) {
       // This code makes it so ALL self-signed certificates are accepted. This is meant for testing
       // purposes only.
@@ -109,6 +121,45 @@ final class RestClientFactory {
     }
 
     return builder;
+  }
+
+  private void loadInterceptorPlugins(
+      final OpensearchExporterConfiguration config, final HttpAsyncClientBuilder builder) {
+    log.trace("Plugins detected to be not empty {}", config.getInterceptorPlugins());
+
+    final List<InterceptorPlugin> interceptors = config.getInterceptorPlugins();
+    for (final InterceptorPlugin interceptor : interceptors) {
+      log.trace("Attempting to register {}", interceptor.getId());
+      try {
+        // WARNING! Due to the nature of interceptors, by the moment they (interceptors)
+        // are executed, the below class loader will close the JAR file hence
+        // to avoid NoClassDefFoundError we must not close this class loader.
+        final var classLoader = ExternalJarClassLoader.ofPath(Paths.get(interceptor.getJarPath()));
+
+        final var pluginClass = classLoader.loadClass(interceptor.getClassName());
+        final var plugin = ReflectUtil.newInstance(pluginClass);
+
+        if (plugin instanceof final DatabaseCustomHeaderSupplier dchs) {
+          log.trace(
+              "Plugin {} appears to be a DB Header Provider. Registering with interceptor",
+              interceptor.getId());
+          builder.addInterceptorLast(
+              (HttpRequestInterceptor)
+                  (httpRequest, httpContext) -> {
+                    try {
+                      final var customHeader =
+                          ThreadContextUtil.callWithClassLoader(
+                              dchs::getElasticsearchCustomHeader, classLoader);
+                      httpRequest.addHeader(customHeader.key(), customHeader.value());
+                    } catch (final Exception e) {
+                      throw new RuntimeException(e);
+                    }
+                  });
+        }
+      } catch (final Exception e) {
+        throw new RuntimeException("Failed to load interceptor plugin due to exception", e);
+      }
+    }
   }
 
   private void setupBasicAuthentication(
