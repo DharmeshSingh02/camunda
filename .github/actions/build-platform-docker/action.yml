@@ -118,6 +118,7 @@ runs:
         inputs.secret_vault_address != ''
         && inputs.secret_vault_roleId != ''
         && inputs.secret_vault_secretId != ''
+        && inputs.preview-env == 'true'
       with:
         url: ${{ inputs.secret_vault_address }}
         method: approle
