@@ -60,7 +60,7 @@ jobs:
       - uses: ./.github/actions/build-platform-docker
         id: build-zeebe-docker
         with:
-          repository: dev.registry.camunda.cloud/team-camunda/zeebe
+          repository: registry.camunda.cloud/team-camunda/zeebe
           version: pr-${{ github.sha }}
           platforms: ${{ env.DOCKER_PLATFORMS }}
           push: true

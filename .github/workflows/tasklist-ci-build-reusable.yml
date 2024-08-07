@@ -106,7 +106,7 @@ jobs:
       - name: Login to Harbor docker registry
         uses: docker/login-action@v3
         with:
-          registry: dev.registry.camunda.cloud
+          registry: registry.camunda.cloud
           username: ${{ steps.secrets.outputs.NEXUS_USR }}
           password: ${{ steps.secrets.outputs.NEXUS_PSW }}
 
@@ -115,7 +115,7 @@ jobs:
       - name: Build Docker image
         uses: ./.github/actions/build-platform-docker
         with:
-          repository: ${{ inputs.previewEnv && 'dev.registry.camunda.cloud/team-camunda/tasklist' || 'dev.registry.camunda.cloud/team-hto/tasklist' }}
+          repository: ${{ inputs.previewEnv && 'registry.camunda.cloud/team-camunda/tasklist' || 'registry.camunda.cloud/team-hto/tasklist' }}
           version: |
             ${{ env.IMAGE_TAG }}
             ${{ env.CI_IMAGE_TAG }}
