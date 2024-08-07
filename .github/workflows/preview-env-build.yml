@@ -52,7 +52,10 @@ jobs:
         id: build-zeebe-docker
         with:
           repository: dev.registry.camunda.cloud/team-camunda/zeebe
-          version: pr-123
+          version: pr-${{ github.sha }}
           platforms: ${{ env.DOCKER_PLATFORMS }}
           push: true
           distball: ${{ steps.build-zeebe.outputs.distball }}
+          secret_vault_secretId: ${{ secrets.VAULT_SECRET_ID }}
+          secret_vault_address: ${{ secrets.VAULT_ADDR }}
+          secret_vault_roleId: ${{ secrets.VAULT_ROLE_ID }}
