@@ -10,13 +10,19 @@ import {makeAutoObservable} from 'mobx';
 import {
   fetchProcessInstanceListeners,
   ListenerPayload,
+  ListenersDto,
 } from 'modules/api/processInstances/fetchProcessInstanceListeners';
 
 type FetchType = 'initial' | 'prev' | 'next';
 
 type State = {
-  listeners: ListenerEntity[];
+  listenersCount: number;
+  listeners: ListenersDto['listeners'];
   page: number;
+  latestFetch: {
+    fetchType: FetchType;
+    processInstancesCount: number;
+  } | null;
   status:
     | 'initial'
     | 'first-fetch'
@@ -25,15 +31,27 @@ type State = {
     | 'fetching-prev'
     | 'fetched'
     | 'error';
+  currentProcessInstanceId: ProcessInstanceEntity['id'];
+  currentFlowNodeId: string;
 };
 
 const DEFAULT_STATE: State = {
+  listenersCount: 0,
   listeners: [],
   page: 1,
+  latestFetch: null,
   status: 'initial',
+  currentProcessInstanceId: '',
+  currentFlowNodeId: '',
 };
 
-const DEFAULT_PAYLOAD: ListenerPayload = {flowNodeId: '', pageSize: 6};
+const MAX_LISTENERS_STORED = 12; //200
+const MAX_LISTENERS_PER_REQUEST = 6; //50
+
+const DEFAULT_PAYLOAD: ListenerPayload = {
+  flowNodeId: '',
+  pageSize: MAX_LISTENERS_PER_REQUEST,
+};
 
 class ProcessInstanceListeners {
   state: State = {...DEFAULT_STATE};
@@ -50,13 +68,109 @@ class ProcessInstanceListeners {
     }
   };
 
-  handleFetchSuccess = (listeners: ListenerEntity[]) => {
-    this.state.listeners = listeners;
+  startFetchingNext = () => {
+    this.state.status = 'fetching-next';
+  };
+
+  startFetchingPrev = () => {
+    this.state.status = 'fetching-prev';
+  };
+
+  handleFetchSuccess = () => {
     this.state.status = 'fetched';
   };
 
   handleFetchFailure = () => {
     this.state.status = 'error';
+    this.state.listenersCount = 0;
+    this.state.listeners = [];
+  };
+
+  setListeners = ({
+    listenersCount,
+    listeners,
+  }: {
+    listenersCount: number;
+    listeners: ListenerEntity[];
+  }) => {
+    this.state.listeners = listeners;
+    this.state.listenersCount = listenersCount;
+  };
+
+  setLatestFetchDetails = (
+    fetchType: FetchType,
+    processInstancesCount: number,
+  ) => {
+    this.state.latestFetch = {
+      fetchType,
+      processInstancesCount,
+    };
+  };
+
+  getListeners = (fetchType: FetchType, listeners: ListenerEntity[]) => {
+    switch (fetchType) {
+      case 'next':
+        const allListeners = [...this.state.listeners, ...listeners];
+
+        return allListeners.slice(
+          Math.max(allListeners.length - MAX_LISTENERS_STORED, 0),
+        );
+      case 'prev':
+        return [...listeners, ...this.state.listeners].slice(
+          0,
+          MAX_LISTENERS_STORED,
+        );
+      case 'initial':
+      default:
+        return listeners;
+    }
+  };
+
+  shouldFetchPreviousListeners = () => {
+    const {latestFetch, listeners, status} = this.state;
+    if (['fetching-prev', 'fetching-next', 'fetching'].includes(status)) {
+      return false;
+    }
+
+    return (
+      (latestFetch?.fetchType === 'next' &&
+        listeners.length === MAX_LISTENERS_STORED) ||
+      (latestFetch?.fetchType === 'prev' &&
+        latestFetch?.processInstancesCount === MAX_LISTENERS_PER_REQUEST)
+    );
+  };
+
+  shouldFetchNextListeners = () => {
+    const {latestFetch, listeners, status} = this.state;
+    if (['fetching-prev', 'fetching-next', 'fetching'].includes(status)) {
+      return false;
+    }
+
+    return (
+      (latestFetch?.fetchType === 'next' &&
+        latestFetch?.processInstancesCount === MAX_LISTENERS_STORED) ||
+      (latestFetch?.fetchType === 'prev' &&
+        listeners.length === MAX_LISTENERS_STORED) ||
+      latestFetch?.fetchType === 'initial'
+    );
+  };
+
+  fetchPreviousInstances = async () => {
+    this.startFetchingPrev();
+
+    return this.fetchListeners('prev', this.state.currentProcessInstanceId, {
+      flowNodeId: this.state.currentFlowNodeId,
+      pageSize: MAX_LISTENERS_PER_REQUEST,
+    });
+  };
+
+  fetchNextInstances = async () => {
+    this.startFetchingNext();
+
+    return this.fetchListeners('next', this.state.currentProcessInstanceId, {
+      flowNodeId: this.state.currentFlowNodeId,
+      pageSize: MAX_LISTENERS_PER_REQUEST,
+    });
   };
 
   fetchListeners = async (
@@ -64,6 +178,9 @@ class ProcessInstanceListeners {
     processInstanceId: ProcessInstanceEntity['id'],
     payload: ListenerPayload = DEFAULT_PAYLOAD,
   ) => {
+    this.state.currentProcessInstanceId = processInstanceId;
+    this.state.currentFlowNodeId = payload.flowNodeId;
+
     if (fetchType === 'initial') {
       this.startFetching();
     }
@@ -82,7 +199,16 @@ class ProcessInstanceListeners {
     });
 
     if (response.isSuccess) {
-      this.handleFetchSuccess(response.data);
+      const {listeners, totalCount} = response.data;
+
+      this.setListeners({
+        listenersCount: totalCount,
+        listeners: this.getListeners(fetchType, listeners),
+      });
+
+      this.setLatestFetchDetails(fetchType, listeners.length);
+
+      this.handleFetchSuccess();
     } else {
       this.handleFetchFailure();
     }
@@ -94,3 +220,4 @@ class ProcessInstanceListeners {
 }
 
 export const processInstanceListenersStore = new ProcessInstanceListeners();
+export {MAX_LISTENERS_STORED};

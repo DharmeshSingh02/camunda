@@ -9,12 +9,15 @@
 import {observer} from 'mobx-react';
 import {CellContainer, Content, StructuredList} from './styled';
 import {spaceAndCapitalize} from 'modules/utils/spaceAndCapitalize';
+import {processInstanceListenersStore} from 'modules/stores/processInstanceListeners';
 
 type Props = {
   listeners: ListenerEntity[];
 };
 
 const Listeners: React.FC<Props> = observer(({listeners}) => {
+  const ROW_HEIGHT = 45;
+
   return (
     <Content>
       <StructuredList
@@ -30,8 +33,18 @@ const Listeners: React.FC<Props> = observer(({listeners}) => {
         headerSize="sm"
         verticalCellPadding="var(--cds-spacing-02)"
         label="Listeners List"
-        // onVerticalScrollStartReach={() => {}} // @TODO: INFINITE SCROLL
-        // onVerticalScrollEndReach={() => {}} // @TODO: INFINITE SCROLL
+        onVerticalScrollStartReach={() => {
+          console.log('listener start');
+        }} // @TODO: INFINITE SCROLL START
+        onVerticalScrollEndReach={() => {
+          if (
+            processInstanceListenersStore.shouldFetchNextListeners() === false
+          ) {
+            return;
+          }
+
+          processInstanceListenersStore.fetchNextInstances();
+        }} // @TODO: INFINITE SCROLL END
         rows={listeners.map(
           ({listenerType, listenerKey, state, jobType, event, time}) => {
             return {

@@ -82,7 +82,7 @@ const VariablePanel = observer(function VariablePanel() {
                       id: 'listeners',
                       label: 'Listeners',
                       content: <Listeners listeners={listeners} />,
-                      onClick: () => {},
+                      removePadding: true,
                     },
                   ]
                 : []),

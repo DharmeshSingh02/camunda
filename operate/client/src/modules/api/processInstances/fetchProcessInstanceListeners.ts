@@ -8,6 +8,11 @@
 
 import {requestAndParse} from 'modules/request';
 
+type ListenersDto = {
+  listeners: ListenerEntity[];
+  totalCount: number;
+};
+
 type ListenerPayload = {
   flowNodeId: string;
   pageSize?: number;
@@ -22,7 +27,7 @@ const fetchProcessInstanceListeners = async (
   {processInstanceId, payload}: fetchProcessInstanceListenersParams,
   options?: Parameters<typeof requestAndParse>[1],
 ) => {
-  return await requestAndParse<ListenerEntity[]>(
+  return await requestAndParse<ListenersDto>(
     {
       url: `/api/process-instances/${processInstanceId}/listeners`,
       method: 'POST',
@@ -33,4 +38,4 @@ const fetchProcessInstanceListeners = async (
 };
 
 export {fetchProcessInstanceListeners};
-export type {ListenerPayload};
+export type {ListenersDto, ListenerPayload};

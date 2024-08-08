@@ -18,7 +18,8 @@ const listenersHandler = IS_LISTENERS_TAB_SUPPORTED
           const body: {pageSize: number; flowNodeId: string} = await req.json();
 
           if (body.flowNodeId.includes('start')) {
-            return res(ctx.json(mockListeners.slice(0, body.pageSize)));
+            const listeners = mockListeners.slice(0, body.pageSize);
+            return res(ctx.json({listeners, totalCount: listeners.length}));
           }
           return res(ctx.json([]));
         },
