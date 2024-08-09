@@ -993,7 +993,7 @@ components:
           type: string
         flowNodeId:
           type: string
-        flowInstanceId:
+        flowNodeInstanceId:
           type: string
         creationTime:
           type: string
@@ -1033,7 +1033,7 @@ components:
           type: string
         flowNodeId:
           type: string
-        flowInstanceId:
+        flowNodeInstanceId:
           type: string
         creationTime:
           type: string
@@ -1047,12 +1047,12 @@ components:
         hasActiveOperation:
           type: boolean
         lastOperation:
-          $ref: "#/components/schemas/Operation"
+          $ref: "#/components/schemas/OperationItem"
         rootCauseInstance:
-          $ref: "#/components/schemas/ProcessInstanceReference"
+          $ref: "#/components/schemas/ProcessInstanceReferenceItem"
         rootCauseDecision:
-          $ref: "#/components/schemas/DecisionInstanceReference"
-    Operation:
+          $ref: "#/components/schemas/DecisionInstanceReferenceItem"
+    OperationItem:
       description: " Operation"
       type: object
       properties:
@@ -1068,7 +1068,7 @@ components:
           type: string
         completedDate:
           type: string
-    ProcessInstanceReference:
+    ProcessInstanceReferenceItem:
       description: "Process instance reference description"
       type: object
       properties:
@@ -1078,7 +1078,7 @@ components:
           type: string
         processDefinitionName:
           type: string
-    DecisionInstanceReference:
+    DecisionInstanceReferenceItem:
       description: "Decision instance reference description"
       type: object
       properties:
