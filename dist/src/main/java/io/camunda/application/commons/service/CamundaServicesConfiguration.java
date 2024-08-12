@@ -8,6 +8,7 @@
 package io.camunda.application.commons.service;
 
 import io.camunda.search.clients.CamundaSearchClient;
+import io.camunda.service.AuthorizationServices;
 import io.camunda.service.CamundaServices;
 import io.camunda.service.DecisionDefinitionServices;
 import io.camunda.service.DecisionRequirementsServices;
@@ -20,6 +21,7 @@ import io.camunda.zeebe.broker.client.api.BrokerClient;
 import io.camunda.zeebe.gateway.impl.job.ActivateJobsHandler;
 import io.camunda.zeebe.gateway.protocol.rest.JobActivationResponse;
 import io.camunda.zeebe.gateway.rest.ConditionalOnRestGatewayEnabled;
+import io.camunda.zeebe.protocol.impl.record.value.authorization.AuthorizationRecord;
 import io.camunda.zeebe.protocol.impl.record.value.user.UserRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -81,5 +83,11 @@ public class CamundaServicesConfiguration {
   @Bean
   public UserServices<UserRecord> userServices(final CamundaServices camundaServices) {
     return camundaServices.userServices();
+  }
+
+  @Bean
+  public AuthorizationServices<AuthorizationRecord> authorizationServices(
+      final CamundaServices camundaServices) {
+    return camundaServices.authorizationServices();
   }
 }
