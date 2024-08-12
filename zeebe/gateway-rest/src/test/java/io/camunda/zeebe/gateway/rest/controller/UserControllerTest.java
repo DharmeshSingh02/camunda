@@ -35,7 +35,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @WebMvcTest(UserController.class)
 public class UserControllerTest extends RestControllerTest {
 
-  @MockBean private UserServices userServices;
+  @MockBean private UserServices<UserRecord> userServices;
   @MockBean private PasswordEncoder passwordEncoder;
 
   @BeforeEach
@@ -47,7 +47,7 @@ public class UserControllerTest extends RestControllerTest {
   }
 
   @Test
-  void createUserShouldCreateAndReturnNewUser() {
+  void createUserShouldReturnNoContent() {
 
     final CamundaUserWithPasswordRequest dto = new CamundaUserWithPasswordRequest();
     dto.setUsername("demo");
@@ -75,8 +75,7 @@ public class UserControllerTest extends RestControllerTest {
         .bodyValue(dto)
         .exchange()
         .expectStatus()
-        .is2xxSuccessful()
-        .expectBody();
+        .isNoContent();
 
     verify(userServices, times(1))
         .createUser(dto.getUsername(), dto.getName(), dto.getEmail(), dto.getPassword());
