@@ -43,8 +43,15 @@ public class ElasticsearchListenerReader extends AbstractReader implements Liste
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ElasticsearchListenerReader.class);
 
-  @Autowired private JobTemplate jobTemplate;
-  @Autowired private RestHighLevelClient esClient;
+  private final JobTemplate jobTemplate;
+  private final RestHighLevelClient esClient;
+
+  @Autowired
+  public ElasticsearchListenerReader(
+      final JobTemplate jobTemplate, final RestHighLevelClient esClient) {
+    this.jobTemplate = jobTemplate;
+    this.esClient = esClient;
+  }
 
   @Override
   public List<ListenerDto> getListenerExecutions(

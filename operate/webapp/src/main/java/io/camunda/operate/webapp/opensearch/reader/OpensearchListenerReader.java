@@ -33,12 +33,22 @@ import org.springframework.stereotype.Component;
 @Component
 public class OpensearchListenerReader extends OpensearchAbstractReader implements ListenerReader {
 
-  @Autowired private JobTemplate jobTemplate;
-  @Autowired private RichOpenSearchClient richOpenSearchClient;
+  private final JobTemplate jobTemplate;
+  private final RichOpenSearchClient richOpenSearchClient;
 
   @Autowired
   @Qualifier("operateObjectMapper")
   private ObjectMapper objectMapper;
+
+  @Autowired
+  public OpensearchListenerReader(
+      final JobTemplate jobTemplate,
+      final RichOpenSearchClient richOpenSearchClient,
+      @Qualifier("operateObjectMapper") final ObjectMapper objectMapper) {
+    this.jobTemplate = jobTemplate;
+    this.richOpenSearchClient = richOpenSearchClient;
+    this.objectMapper = objectMapper;
+  }
 
   @Override
   public List<ListenerDto> getListenerExecutions(
