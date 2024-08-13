@@ -76,8 +76,7 @@ public class ElasticsearchListenerReader extends AbstractReader implements Liste
                         boolQuery()
                             .must(processInstanceQ)
                             .must(flowNodeIdQ)
-                            .should(executionListenersQ)
-                            .should(taskListenersQ))
+                            .must(boolQuery().should(executionListenersQ).should(taskListenersQ)))
                     .sort(sorting)
                     .size(request.getPageSize()));
 
