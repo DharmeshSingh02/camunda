@@ -65,6 +65,7 @@ final class RateLimitThrottle {
           rate,
           backlog,
           limit.throttling().acceptableBacklog());
+      metrics.setClusterLoad(100);
     }
     limiter.setRate(adjustedRate);
     metrics.setWriteRateMaxLimit(limit.limit());
