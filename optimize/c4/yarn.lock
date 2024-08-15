@@ -2213,15 +2213,15 @@ __metadata:
   linkType: hard
 
 "@carbon/icons-react@npm:^11.41.0, @carbon/icons-react@npm:^11.46.0":
-  version: 11.46.0
-  resolution: "@carbon/icons-react@npm:11.46.0"
+  version: 11.47.0
+  resolution: "@carbon/icons-react@npm:11.47.0"
   dependencies:
     "@carbon/icon-helpers": "npm:^10.50.0"
     "@ibm/telemetry-js": "npm:^1.5.0"
     prop-types: "npm:^15.7.2"
   peerDependencies:
     react: ">=16"
-  checksum: 10c0/b5259a325dbfef7bde7cdb4259a36b980471cf325b274b4bc1430f3934ce7e4fad301b4a107e840bedae357f796c4be0cc271cfbd00c75cdd9813b1ceec6808b
+  checksum: 10c0/c79ee3ba3b2328e5e9c9ab23b61b8448519090fc8cbb75d48e92e3a3bc1f7c738715fb4eea1ed0a1958ed0dc09a531bf7f6cfc9bfcd40a1af87eae31f3f6272d
   languageName: node
   linkType: hard
 
