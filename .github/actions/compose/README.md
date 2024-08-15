@@ -12,8 +12,8 @@ Using the `env` directive allows configuring variables within the docker-compose
 
 ### Inputs
 
-|    Input     |                        Description                         | Required | Default |
-|--------------|------------------------------------------------------------|----------|---------|
+| Input        | Description                                                | Required | Default |
+| ------------ | ---------------------------------------------------------- | -------- | ------- |
 | compose_file | Full path to the compose file                              | true     |         |
 | project_name | Project name to allow running the same file multiple times | true     |         |
 
@@ -21,23 +21,14 @@ Using the `env` directive allows configuring variables within the docker-compose
 
 ```yaml
 steps:
-- name: Start Elastic - Old
-  uses: ./.github/actions/compose
-  with:
-    compose_file: ${{ github.workspace }}/.github/actions/compose/docker-compose.elasticsearch.yml
-    project_name: elasticsearch-old
-  env:
-    ELASTIC_VERSION: 7.10.0
-    ELASTIC_JVM_MEMORY: 1
-    ELASTIC_HTTP_PORT: 9250
-- name: Start Elastic - New
-  uses: ./.github/actions/compose
-  with:
-    compose_file: ${{ github.workspace }}/.github/actions/compose/docker-compose.elasticsearch.yml
-    project_name: elasticsearch-new
-  env:
-    ELASTIC_VERSION: 7.10.0
-    ELASTIC_JVM_MEMORY: 1
-    ELASTIC_HTTP_PORT: 9200
+  - uses: actions/checkout@v3
+  - name: Start Elasticsearch
+    uses: ./.github/actions/compose
+    with:
+      compose_file: ${{ github.workspace }}/.github/actions/compose/docker-compose.elasticsearch.yml
+      project_name: elasticsearch-old
+    env:
+      ELASTIC_VERSION: 7.10.0
+      ELASTIC_JVM_MEMORY: 1
+      ELASTIC_HTTP_PORT: 9250
 ```
-

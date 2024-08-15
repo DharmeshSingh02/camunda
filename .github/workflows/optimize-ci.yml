@@ -99,19 +99,11 @@ jobs:
         push: true
 
   integration-tests:
-    name: Integration Tests
+    name: Integration Tests CCSM
     runs-on: gcp-core-32-default
     timeout-minutes: 120
     needs: detect-changes
     if: ${{ needs.detect-changes.outputs.backend-changes == 'true' }}
-    strategy:
-      fail-fast: false
-      matrix:
-        includedGroups: [ 'ccsm-test' ]
-        include:
-        - includedGroups: 'ccsm-test'
-          excludedGroups: ''
-          profiles: 'ccsm-it'
 
     steps:
     - name: Checkout repository
@@ -155,9 +147,9 @@ jobs:
       with:
         threads: 8
         parameters: >
-          verify -Dit.test.excludedGroups=${{ matrix.excludedGroups }}
-          -Dit.test.includedGroups=${{ matrix.includedGroups }}
-          -Dskip.docker -Dskip.fe.build -P${{ matrix.profiles }}
+          verify
+          -Dit.test.includedGroups=ccsm-test
+          -Dskip.docker -Dskip.fe.build -Pccsm-it
           -Dfailsafe.rerunFailingTestsCount=2
           -Ddatabase.type=elasticsearch -pl optimize/backend -am
 
@@ -165,7 +157,7 @@ jobs:
       if: always()
       uses: actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a # v4
       with:
-        name: integration-test-elasticsearch-${{ matrix.includedGroups }}-junit
+        name: integration-test-elasticsearch-ccsm-test-junit
         path: |
           **/failsafe-reports/**/*.xml
         retention-days: 7
@@ -175,7 +167,7 @@ jobs:
       uses: ./.github/actions/docker-logs
       if: always()
       with:
-        archive_name: integration-tests-elasticsearch-${{ matrix.includedGroups }}-docker
+        archive_name: integration-tests-elasticsearch-ccsm-test-docker
 
   integration-tests-os:
     name: Integration Tests OpenSearch
@@ -183,14 +175,6 @@ jobs:
     timeout-minutes: 120
     needs: detect-changes
     if: ${{ needs.detect-changes.outputs.backend-changes == 'true' }}
-    strategy:
-      fail-fast: false
-      matrix:
-        includedGroups: [ 'ccsm-test' ]
-        include:
-          - includedGroups: 'ccsm-test'
-            excludedGroups: ''
-            profiles: 'ccsm-it'
 
     steps:
       - name: Checkout repository
@@ -233,9 +217,9 @@ jobs:
         with:
           threads: 8
           parameters: >
-            verify -Dit.test.excludedGroups=${{ matrix.excludedGroups }}
-            -Dit.test.includedGroups=${{ matrix.includedGroups }}
-            -Dskip.docker -Dskip.fe.build -P${{ matrix.profiles }}
+            verify
+            -Dit.test.includedGroups=ccsm-test
+            -Dskip.docker -Dskip.fe.build -Pccsm-it
             -Dfailsafe.rerunFailingTestsCount=2
             -Ddatabase.type=opensearch -pl optimize/backend -am
 
@@ -243,7 +227,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a # v4
         with:
-          name: integration-test-opensearch-${{ matrix.includedGroups }}-junit
+          name: integration-test-opensearch-ccsm-test-junit
           path: |
             **/failsafe-reports/**/*.xml
           retention-days: 7
@@ -253,7 +237,7 @@ jobs:
         uses: ./.github/actions/docker-logs
         if: always()
         with:
-          archive_name: integration-tests-opensearch-${{ matrix.includedGroups }}-docker
+          archive_name: integration-tests-opensearch-ccsm-test-docker
 
   integration-tests-os-dev:
     name: Integration Tests OpenSearch Development

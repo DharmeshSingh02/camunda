@@ -10,8 +10,8 @@ Composite actions don't support pre and post steps yet, see [#1478](https://gith
 
 ### Inputs
 
-|    Input     |            Description             | Required | Default |
-|--------------|------------------------------------|----------|---------|
+| Input        | Description                        | Required | Default |
+| ------------ | ---------------------------------- | -------- | ------- |
 | archive_name | The name provided for the archive. | true     |         |
 
 ## Example of using the action
@@ -34,4 +34,3 @@ steps:
     with:
       archive_name: migration-docker
 ```
-
