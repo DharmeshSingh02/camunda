@@ -14,6 +14,7 @@ import io.camunda.service.DecisionDefinitionServices;
 import io.camunda.service.DecisionRequirementsServices;
 import io.camunda.service.IncidentServices;
 import io.camunda.service.JobServices;
+import io.camunda.service.MessageServices;
 import io.camunda.service.ProcessInstanceServices;
 import io.camunda.service.UserServices;
 import io.camunda.service.UserTaskServices;
@@ -89,5 +90,10 @@ public class CamundaServicesConfiguration {
   public AuthorizationServices<AuthorizationRecord> authorizationServices(
       final CamundaServices camundaServices) {
     return camundaServices.authorizationServices();
+  }
+
+  @Bean
+  public MessageServices messageServices(final CamundaServices camundaServices) {
+    return camundaServices.messageServices();
   }
 }

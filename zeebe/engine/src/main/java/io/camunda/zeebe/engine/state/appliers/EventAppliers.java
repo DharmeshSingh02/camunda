@@ -123,6 +123,7 @@ public final class EventAppliers implements EventApplier {
     register(TimerIntent.CREATED, new TimerCreatedApplier(state.getTimerState()));
     register(TimerIntent.CANCELED, new TimerCancelledApplier(state.getTimerState()));
     register(TimerIntent.TRIGGERED, new TimerTriggeredApplier(state.getTimerState()));
+    register(TimerIntent.MIGRATED, new TimerMigrationApplier(state.getTimerState()));
   }
 
   private void registerDeploymentAppliers(final MutableProcessingState state) {
@@ -233,7 +234,8 @@ public final class EventAppliers implements EventApplier {
   private void registerMessageCorrelationAppliers(final MutableProcessingState state) {
     register(MessageCorrelationIntent.CORRELATING, new MessageCorrelationCorrelatingApplier(state));
     register(MessageCorrelationIntent.CORRELATED, new MessageCorrelationCorrelatedApplier(state));
-    register(MessageCorrelationIntent.NOT_CORRELATED, NOOP_EVENT_APPLIER);
+    register(
+        MessageCorrelationIntent.NOT_CORRELATED, new MessageCorrelationNotCorrelatedApplier(state));
   }
 
   private void registerUserAppliers(final MutableProcessingState state) {

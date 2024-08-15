@@ -385,9 +385,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@carbon/react@npm:1.63.1":
-  version: 1.63.1
-  resolution: "@carbon/react@npm:1.63.1"
+"@carbon/react@npm:1.63.2":
+  version: 1.63.2
+  resolution: "@carbon/react@npm:1.63.2"
   dependencies:
     "@babel/runtime": "npm:^7.24.7"
     "@carbon/feature-flags": "npm:^0.21.0"
@@ -415,7 +415,7 @@ __metadata:
     react: ^16.8.6 || ^17.0.1 || ^18.2.0
     react-dom: ^16.8.6 || ^17.0.1 || ^18.2.0
     sass: ^1.33.0
-  checksum: 10c0/99237170f1be35088f6653b16d34b57628e34f130281e70908df4369dc0e91ecac6813bb7473556a9907ba929c2c14172caf1b424b1db856c1d1dcdd5f7bbfe1
+  checksum: 10c0/32ecd5a80aa6076e6989b9b10e627a9560560ae42139b360cae259a9bb00a0a2568d17feef0c401331f4af5be82fcfa3d9c4427e7fd6e7e36b53a987cb47d6cb
   languageName: node
   linkType: hard
 
@@ -1104,12 +1104,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:20.14.14":
-  version: 20.14.14
-  resolution: "@types/node@npm:20.14.14"
+"@types/node@npm:20.14.15":
+  version: 20.14.15
+  resolution: "@types/node@npm:20.14.15"
   dependencies:
     undici-types: "npm:~5.26.4"
-  checksum: 10c0/4fc8d368df2b6f5497698327b30db68d7d20e32221ce7d057fb15cbd5834685b2fde0440609e4cb2204e5d305b928f008faf41b950a425f3fd55b60cb1b997cf
+  checksum: 10c0/093713db52dc544f3931a3dec9d7d8ef661f323e57becd083a7918c778cef1eb6ec32d1017bf5ade06bb06dc5c7551f4f4d749a14e40868cce44d51e54acd8ed
   languageName: node
   linkType: hard
 
@@ -1129,12 +1129,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-transition-group@npm:4.4.10":
-  version: 4.4.10
-  resolution: "@types/react-transition-group@npm:4.4.10"
+"@types/react-transition-group@npm:4.4.11":
+  version: 4.4.11
+  resolution: "@types/react-transition-group@npm:4.4.11"
   dependencies:
     "@types/react": "npm:*"
-  checksum: 10c0/3eb9bca143abc21eb781aa5cb1bded0c9335689d515bf0513fb8e63217b7a8122c6a323ecd5644a06938727e1f467ee061d8df1c93b68825a80ff1b47ab777a2
+  checksum: 10c0/8fbf0dcc1b81985cdcebe3c59d769fe2ea3f4525f12c3a10a7429a59f93e303c82b2abb744d21cb762879f4514969d70a7ab11b9bf486f92213e8fe70e04098d
   languageName: node
   linkType: hard
 
@@ -2477,12 +2477,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"i18next@npm:23.12.2":
-  version: 23.12.2
-  resolution: "i18next@npm:23.12.2"
+"i18next@npm:23.12.3":
+  version: 23.12.3
+  resolution: "i18next@npm:23.12.3"
   dependencies:
     "@babel/runtime": "npm:^7.23.2"
-  checksum: 10c0/aa7654afefc3f5383513563226401994558675a57eb562f0c4580d573d8410d24954f25112d45f9b6b1ca3f88c7beea1ac802ed50ad4081a06a17d08857e3c5d
+  checksum: 10c0/8c17d448130a1f0ea81d4684bdbb791ebc5df0defdb65e0103e0084fe802d2e36451da8721a39dea29401f709de79e34e6a8079913bf38018a698203f606f2b0
   languageName: node
   linkType: hard
 
@@ -2500,12 +2500,12 @@ __metadata:
   resolution: "identity-frontend@workspace:."
   dependencies:
     "@camunda/camunda-composite-components": "npm:0.8.1"
-    "@carbon/react": "npm:1.63.1"
+    "@carbon/react": "npm:1.63.2"
     "@types/event-source-polyfill": "npm:1.0.5"
-    "@types/node": "npm:20.14.14"
+    "@types/node": "npm:20.14.15"
     "@types/react": "npm:18.3.3"
     "@types/react-dom": "npm:18.3.0"
-    "@types/react-transition-group": "npm:4.4.10"
+    "@types/react-transition-group": "npm:4.4.11"
     "@typescript-eslint/eslint-plugin": "npm:7.18.0"
     "@typescript-eslint/parser": "npm:7.18.0"
     "@vitejs/plugin-react": "npm:4.3.1"
@@ -2513,7 +2513,7 @@ __metadata:
     eslint-plugin-react-hooks: "npm:4.6.2"
     eslint-plugin-react-refresh: "npm:0.4.9"
     event-source-polyfill: "npm:1.0.31"
-    i18next: "npm:23.12.2"
+    i18next: "npm:23.12.3"
     license-checker: "npm:25.0.1"
     prettier: "npm:3.3.3"
     react: "npm:18.3.1"
