@@ -80,13 +80,6 @@ export default function InstanceFilters({openNewFilterModal, processDefinitionIs
           onClick={openNewFilterModal('assignee')}
         />
       )}
-      {optimizeProfile === 'platform' && (
-        <MenuItem
-          label={t('report.groupBy.userGroup')}
-          disabled={processDefinitionIsNotSelected}
-          onClick={openNewFilterModal('candidateGroup')}
-        />
-      )}
       <MenuItem
         label={t('common.filter.types.variable')}
         disabled={processDefinitionIsNotSelected}

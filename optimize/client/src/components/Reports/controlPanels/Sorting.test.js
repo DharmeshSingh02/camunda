@@ -52,14 +52,6 @@ it('should not show soritng options for other chart type', () => {
   expect(node.find('.sortingOrder')).not.toExist();
 });
 
-it('should not show soritng options for other grouping', () => {
-  const node = shallow(
-    <Sorting {...config} report={{...config.report, groupBy: {type: 'candidateGroup'}}} />
-  );
-
-  expect(node.find('.sortingOrder')).not.toExist();
-});
-
 it('should not show soritng options when there is second sorting', () => {
   const node = shallow(
     <Sorting {...config} report={{...config.report, distributedBy: {type: 'flowNode'}}} />

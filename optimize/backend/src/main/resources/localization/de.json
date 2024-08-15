@@ -91,7 +91,6 @@
     },
     "title": "Sammlungen, Dashboards, und Berichte",
     "contents": "Inhalt",
-    "members": "Mitglieder",
     "search": {
       "generic": "Zum Suchen eingeben...",
       "name": "Nach Namen suchen..."
@@ -99,7 +98,6 @@
     "collectionTitle": "Dashboards und Berichte",
     "collectionTitleWithAmpersand": "Dashboards & Berichte",
     "userTitle": "Benutzer",
-    "userGroupsTitle": "Benutzer und Benutzergruppen",
     "copy": {
       "subEntity": "{entityType} enthält 1 Bericht. Dieser wird ebenfalls kopiert.",
       "subEntities": "{entityType} enthält {number} Berichte. Diese werden ebenfalls kopiert.",
@@ -118,7 +116,6 @@
     },
     "roles": {
       "addUserTitle": "Benutzer hinzufügen",
-      "addUserGroupTitle": "Benutzer oder Benutzergruppe hinzufügen",
       "userRole": "Benutzer-Rolle",
       "role": "Rolle",
       "viewer": "Betrachter",
@@ -127,7 +124,7 @@
       "editor-description": "Erstellen, bearbeiten und löschen von Dashboards, Berichten und Alarmen",
       "manager": "Manager",
       "manager-description": "Volle Rechte beim Bearbeiten von Sammlungen und Benutzern",
-      "existing-identity": "Ein Benutzer oder eine Gruppe mit dieser ID existiert schon",
+      "existing-identity": "Ein Benutzer mit dieser ID existiert schon",
       "inCollection": "in dieser Sammlung",
       "deleteWarning": "'{name}' {type} wird von der Sammlung entfernt."
     },
@@ -319,7 +316,6 @@
       "endDate": "Enddatum",
       "variable": "Variable",
       "userAssignee": "Bearbeiter",
-      "userGroup": "Potenzielle Gruppe",
       "evaluationDate": "Evaluierungsdatum",
       "rules": "Regeln",
       "inputVariable": "Eingabevariable",
@@ -769,7 +765,7 @@
       "label": "Berichtsfilter hinzufügen",
       "viewLabel": "Berichtsdaten filtern",
       "disabledVariable": "Variablenfilter sind nur für Dashboards mit mindestens einem Bericht verfügbar.",
-      "disabledAssignee": "Bearbeiter- und potenzielle Gruppen-Filter sind nur für Dashboards mit mindestens einem Bericht verfügbar.",
+      "disabledAssignee": "Bearbeiterfilter sind nur für Dashboards mit mindestens einem Bericht verfügbar.",
       "resetAll": "Alle zurücksetzen",
       "operatorLink": "Werte werden durch {operator} verknüpft",
       "multiple": "mehrere",
@@ -1067,11 +1063,6 @@
       "label-plural": "Benutzer",
       "id": "Benutzer ID"
     },
-    "user-group": {
-      "label": "Nutzergruppe",
-      "label-plural": "Nutzergruppen",
-      "id": "Nutzergruppen ID"
-    },
     "collection": {
       "label": "Sammlung",
       "label-plural": "Sammlungen",
@@ -1160,7 +1151,6 @@
         "instanceState": "Instanzstatus",
         "date": "Instanzdatum",
         "assignee": "Bearbeiter",
-        "candidateGroup": "Potenzielle Gruppe",
         "instanceStartDate": "Startdatum",
         "instanceEndDate": "Enddatum",
         "instance": "Prozessinstanz",
@@ -1322,8 +1312,7 @@
         "includeOnly": "Nur einschließen",
         "excludeOnly": "Nur ausschließen",
         "type": {
-          "assignee": "Bearbeiter",
-          "candidateGroup": "Potenzielle Gruppe"
+          "assignee": "Bearbeiter"
         },
         "unassigned": "Nicht zugewiesen",
         "selectValue": "Filter für ID"
@@ -1379,7 +1368,6 @@
         "dashboard": "Dashboard",
         "alert": "Alarm",
         "user": "Benutzer",
-        "group": "Gruppe",
         "source": "Datenquelle",
         "collection": "Sammlung",
         "process": "Prozess",

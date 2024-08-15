@@ -43,8 +43,7 @@ export default function GroupBy({type, report, onChange, variables}) {
       ({visible, key}) =>
         visible(report) &&
         key !== 'none' &&
-        (userTaskAssigneeAnalyticsEnabled || key !== 'assignee') &&
-        (optimizeProfile === 'platform' ? true : key !== 'candidateGroup')
+        (userTaskAssigneeAnalyticsEnabled || key !== 'assignee')
     )
     .map(({key, enabled, label}) => {
       if (['variable', 'inputVariable', 'outputVariable'].includes(key)) {

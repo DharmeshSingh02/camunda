@@ -59,13 +59,6 @@ export default function ViewFilters({openNewFilterModal, processDefinitionIsNotS
           onClick={openNewFilterModal('assignee')}
         />
       )}
-      {optimizeProfile === 'platform' && (
-        <MenuItem
-          label={t('report.groupBy.userGroup')}
-          disabled={processDefinitionIsNotSelected}
-          onClick={openNewFilterModal('candidateGroup')}
-        />
-      )}
       <MenuItem
         label={t('common.filter.types.flowNodeSelection')}
         disabled={processDefinitionIsNotSelected}
