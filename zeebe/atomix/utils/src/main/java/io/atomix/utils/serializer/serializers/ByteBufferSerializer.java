@@ -50,7 +50,7 @@ public class ByteBufferSerializer extends Serializer<ByteBuffer> {
     }
 
     if (isLittleEndian) {
-      buffer.order(ByteOrder.nativeOrder());
+      buffer.order(ByteOrder.LITTLE_ENDIAN);
     } else {
       buffer.order(ByteOrder.BIG_ENDIAN);
     }
