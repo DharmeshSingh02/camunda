@@ -126,7 +126,7 @@ public class ByteBufferSerializerTest {
     final int value = 1;
     final int capacity = Long.BYTES;
     final ByteBuffer original =
-        ByteBuffer.allocate(capacity).order(ByteOrder.nativeOrder()).putLong(0, value);
+        ByteBuffer.allocate(capacity).order(ByteOrder.LITTLE_ENDIAN).putLong(0, value);
 
     // when
     KRYO.writeObject(output, original);
@@ -134,7 +134,7 @@ public class ByteBufferSerializerTest {
     final ByteBuffer deserialized = KRYO.readObject(input, ByteBuffer.class);
 
     // then
-    assertEquals(ByteOrder.nativeOrder(), deserialized.order());
+    assertEquals(ByteOrder.LITTLE_ENDIAN, deserialized.order());
     assertEquals(value, deserialized.getLong(0));
   }
 
