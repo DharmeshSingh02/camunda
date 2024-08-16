@@ -104,7 +104,7 @@ public class RaftEntrySBESerializer implements RaftEntrySerializer {
         entry.dataWriter(),
         ApplicationEntryEncoder.applicationDataHeaderLength(),
         applicationEntryEncoder,
-        ByteOrder.LITTLE_ENDIAN);
+        ByteOrder.nativeOrder());
 
     return entryOffset + headerEncoder.encodedLength() + applicationEntryEncoder.encodedLength();
   }

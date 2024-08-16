@@ -89,7 +89,7 @@ final class PersistedClusterTopology {
     if (content.length < HEADER_LENGTH) {
       throw new MissingHeader(topologyFile, content.length);
     }
-    final var header = ByteBuffer.wrap(content, 0, HEADER_LENGTH).order(ByteOrder.LITTLE_ENDIAN);
+    final var header = ByteBuffer.wrap(content, 0, HEADER_LENGTH).order(ByteOrder.nativeOrder());
     final var version = header.get();
     final var expectedChecksum = header.getLong();
 
@@ -111,7 +111,7 @@ final class PersistedClusterTopology {
     final var checksum = checksum(body, 0, body.length);
     final var buffer =
         ByteBuffer.allocate(HEADER_LENGTH + body.length)
-            .order(ByteOrder.LITTLE_ENDIAN)
+            .order(ByteOrder.nativeOrder())
             .put(VERSION)
             .putLong(checksum)
             .put(body);

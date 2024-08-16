@@ -14,7 +14,7 @@ public final class ZeebeDbConstants {
   /**
    * The byte order is used to write primitive data types into rocks db key or value buffers.
    *
-   * <p>Be aware that {@link ByteOrder.LITTLE_ENDIAN} will reverse the ordering. If the keys start
+   * <p>Be aware that {@link ByteOrder.nativeOrder()} will reverse the ordering. If the keys start
    * with an long, like an timestamp, and the implementation depends on the correct ordering, then
    * this could be a problem.
    *

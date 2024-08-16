@@ -28,7 +28,7 @@ public class ByteBufferSerializer extends Serializer<ByteBuffer> {
   @Override
   public void write(final Kryo kryo, final Output output, final ByteBuffer object) {
     output.writeBoolean(object.isDirect());
-    output.writeBoolean(ByteOrder.LITTLE_ENDIAN.equals(object.order()));
+    output.writeBoolean(ByteOrder.nativeOrder().equals(object.order()));
     output.writeInt(object.remaining());
     for (int i = object.position(); i < object.limit(); i++) {
       output.writeByte(object.get(i));
@@ -50,7 +50,7 @@ public class ByteBufferSerializer extends Serializer<ByteBuffer> {
     }
 
     if (isLittleEndian) {
-      buffer.order(ByteOrder.LITTLE_ENDIAN);
+      buffer.order(ByteOrder.nativeOrder());
     } else {
       buffer.order(ByteOrder.BIG_ENDIAN);
     }
